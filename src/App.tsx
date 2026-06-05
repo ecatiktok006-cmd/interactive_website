@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import VideoScroller from './components/VideoScroller';
+import AboutSection from './components/AboutSection';
+import ServicesSection from './components/ServicesSection';
 import { Compass } from 'lucide-react';
 import Lenis from 'lenis';
 
@@ -19,6 +21,8 @@ export default function App() {
 
   // Initialize Lenis for buttery smooth scrolling
   useEffect(() => {
+    window.scrollTo(0, 0);
+    
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // smooth exponential easing
@@ -43,11 +47,23 @@ export default function App() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      if (scrollY < 100) {
-        setActiveSection('hero');
-      } else {
-        setActiveSection('scroller');
+      const windowHeight = window.innerHeight;
+      
+      const aboutEl = document.getElementById('about');
+      const servicesEl = document.getElementById('services');
+      
+      let newSection = 'hero';
+      
+      if (scrollY > 100) newSection = 'scroller';
+      
+      if (aboutEl && (scrollY + windowHeight / 2) > aboutEl.offsetTop) {
+        newSection = 'about';
       }
+      if (servicesEl && (scrollY + windowHeight / 2) > servicesEl.offsetTop) {
+        newSection = 'services';
+      }
+      
+      setActiveSection(newSection);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -55,17 +71,18 @@ export default function App() {
   }, []);
 
   const handleNavigation = (sectionId: string) => {
-    // If clicking hero, just scroll to top. Video scroller handles the rest.
     if (sectionId === 'hero') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      setActiveSection('hero');
     } else if (sectionId === 'scroller') {
       const element = document.getElementById(sectionId);
       if (element) {
-        // Scroll slightly down to trigger the scroller logic
         const y = element.getBoundingClientRect().top + window.scrollY + 100;
         window.scrollTo({ top: y, behavior: 'smooth' });
-        setActiveSection('scroller');
+      }
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     }
   };
@@ -83,6 +100,10 @@ export default function App() {
 
       {/* --- TIMELINE ROOT SCROLL ELEMENT (Contains the Hero as Segment 0) --- */}
       <VideoScroller videoUrl={displayVideo} isMuted={isMuted} />
+
+      {/* --- STATIC CONTENT SECTIONS --- */}
+      <AboutSection />
+      <ServicesSection />
 
       {/* --- MINIMAL FOOTER --- */}
       <footer className="bg-slate-50 py-16 px-4 md:px-8 border-t border-slate-200">
