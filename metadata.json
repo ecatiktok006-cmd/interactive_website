@@ -1,0 +1,8 @@
+{
+  "name": "Remix: ECA Group Interactive Showcase",
+  "description": "An interactive landing page with a moving car video mapped to user scrolling stops.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
